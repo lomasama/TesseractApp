@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCR with Tesseract.js</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <h1>OCR with Tesseract.js</h1>
+  <input type="file" id="imageInput" />
+  <button onclick="performOCR()">Extract Text</button>
+  <p id="output"></p>
+
+  <script>
+    function performOCR() {
+      const file = document.getElementById("imageInput").files[0];
+      if (!file) {
+        alert("Please select an image first!");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        Tesseract.recognize(
+          reader.result, // image source
+          'eng', // language code
+          {
+            logger: info => console.log(info), // optional logger
+          }
+        ).then(({ data: { text } }) => {
+          document.getElementById("output").innerText = text;
+        }).catch(error => {
+          console.error(error);
+        });
+      };
+
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>
